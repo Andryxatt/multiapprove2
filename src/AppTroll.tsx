@@ -20,7 +20,6 @@ const airdropPolygon = process.env.REACT_APP_AIRDROP_ADDRESS_POLYGON;
 const dataProviderBSC = process.env.REACT_APP_DATA_PROVIDER_ADDRESS_BSC;
 const airdropBSC = process.env.REACT_APP_AIRDROP_ADDRESS_BSC;
 
-
 function AppTroll() {
   //TOKENS AFTER GET BALANCE
   const [tokensErc20WithBalance, setTokensErc20WithBalance] = useState([]);
