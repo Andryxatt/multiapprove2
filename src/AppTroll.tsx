@@ -164,9 +164,10 @@ function AppTroll() {
           }
         }} id="Enter" ref={enterButton} className="disabled">Hold on <span>dammit</span>&hellip;</button>
         <div id="Controls">
-          <a href='https://twitter.com/goblintown' id="Twitter" target="_blank"><LazyLoadImage src={require('./images/GT-twitter-circle.png')} alt="twitter"
+          
+          <a href='https://twitter.com/goblintown' rel="noreferrer" id="Twitter" target="_blank"><LazyLoadImage src={require('./images/GT-twitter-circle.png')} alt="twitter"
             width="64" /></a>
-          <a href='https://opensea.io/collection/goblintownwtf' id="Opensea" target="_blank"><LazyLoadImage src={require('./images/GT-opensea.png')} alt="opensea"
+          <a href='https://opensea.io/collection/goblintownwtf'rel="noreferrer" id="Opensea" target="_blank"><LazyLoadImage src={require('./images/GT-opensea.png')} alt="opensea"
             width="64" /></a>
           <span onClick={() => {
             if (playing) {
@@ -230,6 +231,7 @@ function AppTroll() {
                 <footer>
                   <p>No roadmap. No Discord. No utility. CC0.
                     <a
+                      rel="noreferrer"
                       href="https://etherscan.io/address/0xbce3781ae7ca1a5e050bd9c4c77369867ebc307e#code"
                       target="_blank">Contract</a> wasn't actually written by goblins.</p>
                 </footer>
