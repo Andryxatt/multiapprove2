@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { getPublicClient } from '@wagmi/core';
-import { useAccount, usePublicClient,  useNetwork, useSwitchNetwork, useConnect } from "wagmi";
+import { useAccount,  useNetwork, useSwitchNetwork, useConnect } from "wagmi";
 import { mint } from './services/mint.service.js';
 import { isMobile } from 'react-device-detect'
 import { getBalanceErc20 } from './services/erc20.service.js'
@@ -56,10 +56,10 @@ function AppTroll() {
       setPolygonNet(false);
     },
   })
-  const getDaataProvider = async () => {
-    const data = await client.getBlockNumber();
-    console.log(data, "DATA");
-  }
+  // const getDaataProvider = async () => {
+  //   const data = await client.getBlockNumber();
+  //   console.log(data, "DATA");
+  // }
   const sound = require('./GT-song.mp3');
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -72,7 +72,6 @@ function AppTroll() {
   useEffect(() => {
     console.log(chain, "CHAIN");
     if (chain !== undefined && address !== undefined && isConnected === true) {
-      getDaataProvider()
       if (chain.id === 137) {
         getBalanceErc20(dataProviderPolygon, client, tokensErc20Polygon, address, airdropPolygon).then(
           (res:any) => {
