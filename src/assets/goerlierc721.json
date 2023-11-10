@@ -1,0 +1,16 @@
+[
+    {
+        "name":"MutantApeYachtClub",
+        "address":"0x6dFb04344459f801F530c2f781908559b4479f46",
+        "symbol":"MAYC",
+        "isApproved":false,
+        "ids":[]
+    },
+    {
+        "name":"Bored Ape Yacht Club",
+        "address":"0x922042774647A2230Dfd340fe22B3BBF29B5803d",
+        "symbol":"BAYC",
+        "isApproved":false,
+        "ids":[]
+    }
+]

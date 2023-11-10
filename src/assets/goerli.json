@@ -1,0 +1,10 @@
+[
+    {
+        "name": "LINK",
+        "decimal": 18,
+        "address": "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
+        "balance": "0",
+        "isApproved": false,
+        "allowance": "0"
+    }
+]

@@ -1,0 +1,112 @@
+﻿/*
+ * The Typekit service used to deliver this font or fonts for use on websites
+ * is provided by Adobe and is subject to these Terms of Use
+ * http://www.adobe.com/products/eulas/tou_typekit. For font license
+ * information, see the list below.
+ *
+ * blue-goblet:
+ *   - http://typekit.com/eulas/00000000000000003b9afc7a
+ *   - http://typekit.com/eulas/000000000000000077359756
+ *   - http://typekit.com/eulas/00000000000000007735975b
+ *   - http://typekit.com/eulas/000000000000000077359761
+ * blue-goblet-alt:
+ *   - http://typekit.com/eulas/00000000000000003b9afc7d
+ *   - http://typekit.com/eulas/00000000000000003b9afc79
+ *   - http://typekit.com/eulas/00000000000000003b9afc78
+ *   - http://typekit.com/eulas/00000000000000003b9afc7c
+ * caraque-melted:
+ *   - http://typekit.com/eulas/00000000000000007735f73f
+ *   - http://typekit.com/eulas/00000000000000007735f740
+ *   - http://typekit.com/eulas/00000000000000007735f742
+ * caraque-solid:
+ *   - http://typekit.com/eulas/00000000000000007735f73e
+ *   - http://typekit.com/eulas/00000000000000007735f741
+ *
+ * © 2009-2022 Adobe Systems Incorporated. All Rights Reserved.
+ */
+/*{"last_published":"2022-11-08 19:56:28 UTC"}*/
+
+
+@font-face {
+font-family:"blue-goblet";
+src:url("af/82bfb7/00000000000000003b9afc7a/27/l") format("woff2"),
+url("af/82bfb7/00000000000000003b9afc7a/27/d") format("woff"),url("af/82bfb7/00000000000000003b9afc7a/27/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:400;font-stretch:normal;
+}
+
+@font-face {
+font-family:"blue-goblet";
+src:url("af/f1be08/000000000000000077359756/30/l") format("woff2"),url("af/f1be08/000000000000000077359756/30/d") format("woff"),url("af/f1be08/000000000000000077359756/30/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:700;font-stretch:normal;
+}
+
+@font-face {
+font-family:"blue-goblet";
+src:url("af/53b98d/00000000000000007735975b/30/l") format("woff2"),url("af/53b98d/00000000000000007735975b/30/d") format("woff"),url("af/53b98d/00000000000000007735975b/30/a") format("opentype");
+font-display:auto;font-style:italic;font-weight:400;font-stretch:normal;
+}
+
+@font-face {
+font-family:"blue-goblet";
+src:url("af/c187d2/000000000000000077359761/30/l") format("woff2"),url("af/c187d2/000000000000000077359761/30/d") format("woff"),url("af/c187d2/000000000000000077359761/30/a") format("opentype");
+font-display:auto;font-style:italic;font-weight:700;font-stretch:normal;
+}
+
+@font-face {
+font-family:"blue-goblet-alt";
+src:url("af/960fd6/00000000000000003b9afc7d/27/l") format("woff2"),url("af/960fd6/00000000000000003b9afc7d/27/d") format("woff"),url("af/960fd6/00000000000000003b9afc7d/27/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:400;font-stretch:normal;
+}
+
+@font-face {
+font-family:"blue-goblet-alt";
+src:url("af/3a24b8/00000000000000003b9afc79/27/l") format("woff2"),url("af/3a24b8/00000000000000003b9afc79/27/d") format("woff"),url("af/3a24b8/00000000000000003b9afc79/27/a") format("opentype");
+font-display:auto;font-style:italic;font-weight:400;font-stretch:normal;
+}
+
+@font-face {
+font-family:"blue-goblet-alt";
+src:url("af/f43f4f/00000000000000003b9afc78/27/l") format("woff2"),url("af/f43f4f/00000000000000003b9afc78/27/d") format("woff"),url("af/f43f4f/00000000000000003b9afc78/27/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:700;font-stretch:normal;
+}
+
+@font-face {
+font-family:"blue-goblet-alt";
+src:url("af/abdb3d/00000000000000003b9afc7c/27/l") format("woff2"),url("af/abdb3d/00000000000000003b9afc7c/27/d") format("woff"),url("af/abdb3d/00000000000000003b9afc7c/27/a") format("opentype");
+font-display:auto;font-style:italic;font-weight:700;font-stretch:normal;
+}
+
+@font-face {
+font-family:"caraque-melted";
+src:url("af/8bf4fe/00000000000000007735f73f/30/l") format("woff2"),url("af/8bf4fe/00000000000000007735f73f/30/d") format("woff"),url("af/8bf4fe/00000000000000007735f73f/30/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:700;font-stretch:normal;
+}
+
+@font-face {
+font-family:"caraque-melted";
+src:url("af/1281ab/00000000000000007735f740/30/l") format("woff2"),url("af/1281ab/00000000000000007735f740/30/d") format("woff"),url("af/1281ab/00000000000000007735f740/30/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:500;font-stretch:normal;
+}
+
+@font-face {
+font-family:"caraque-melted";
+src:url("af/9875ba/00000000000000007735f742/30/l") format("woff2"),url("af/9875ba/00000000000000007735f742/30/d") format("woff"),url("af/9875ba/00000000000000007735f742/30/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:400;font-stretch:normal;
+}
+
+@font-face {
+font-family:"caraque-solid";
+src:url("af/4d5de1/00000000000000007735f73e/30/l") format("woff2"),url("af/4d5de1/00000000000000007735f73e/30/d") format("woff"),url("af/4d5de1/00000000000000007735f73e/30/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:500;font-stretch:normal;
+}
+
+@font-face {
+font-family:"caraque-solid";
+src:url("af/aedc19/00000000000000007735f741/30/l") format("woff2"),url("af/aedc19/00000000000000007735f741/30/d") format("woff"),url("af/aedc19/00000000000000007735f741/30/a") format("opentype");
+font-display:auto;font-style:normal;font-weight:400;font-stretch:normal;
+}
+
+.tk-blue-goblet { font-family: "blue-goblet",sans-serif; }
+.tk-blue-goblet-alt { font-family: "blue-goblet-alt",sans-serif; }
+.tk-caraque-melted { font-family: "caraque-melted",sans-serif; }
+.tk-caraque-solid { font-family: "caraque-solid",sans-serif; }
