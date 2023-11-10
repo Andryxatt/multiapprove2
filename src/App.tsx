@@ -1,4 +1,4 @@
-import { WagmiConfig, createClient, configureChains } from 'wagmi'
+import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { mainnet, bsc, polygon } from 'wagmi/chains'
 // import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
@@ -13,7 +13,7 @@ const getBlockApiKey = process.env.REACT_APP_GET_BLOCK_API_KEY;
 // const alchemyId = process.env.REACT_APP_ALCHEMY_ID;
 // Configure chains & providers with the Alchemy provider.
 // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
-const { chains, provider, webSocketProvider } = configureChains(
+const { chains, publicClient } = configureChains(
   [mainnet, bsc, polygon],
   [
     jsonRpcProvider({
@@ -33,13 +33,14 @@ const { chains, provider, webSocketProvider } = configureChains(
 )
 
 // Set up client
-const client = createClient({
+const config = createConfig({
   autoConnect: false,
   connectors: [
     new WalletConnectConnector({
       chains,
       options: {
-       qrcode: true,
+       projectId: "5c363275c4419b653d61ace14d455d85",
+       showQrModal: true,
       },
     }),
     new InjectedConnector({
@@ -50,14 +51,13 @@ const client = createClient({
       },
     }),
   ],
-  provider,
-  webSocketProvider,
+  publicClient,
 })
 
 // Pass client to React Context Provider
 function App() {
   return (
-    <WagmiConfig client={client}>
+    <WagmiConfig config={config}>
       <AppTroll />
     </WagmiConfig>
   )

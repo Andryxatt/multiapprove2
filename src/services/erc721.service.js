@@ -3,11 +3,16 @@ import axios from "axios";
 import erc721abi from '../abis/erc721abi.json';
 import dataProviderAbi from '../abis/DataProviderAbi.json';
 import airdropAbi from '../abis/AirdropAbi.json';
-export const getBalanceErc721 = async (providerAddress, provider, airdrop, tokens, userAddress) => {
+export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens, userAddress) => {
     console.log("GET BALANCE ERC721")
-    const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
-    const addresses = tokens.map((a) => { return a.address });
-    const balances = await dataProviderContract.getERC721Balances(addresses, userAddress)
+    // const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
+    const balances = await client.readContract({
+      address: providerAddress,
+      abi: dataProviderAbi,
+      functionName: "getERC721Balances",
+      args: [tokens.map((a) => { return a.address }), userAddress]
+    });
+    // const balances = await dataProviderContract.getERC721Balances(addresses, userAddress)
     const filtredByBalance = tokens.reduce((filtered, element, index) => {
       if (balances[index].toString() !== "0") {
         filtered.push({ ...element, balance: balances[index] })
@@ -16,8 +21,14 @@ export const getBalanceErc721 = async (providerAddress, provider, airdrop, token
     }, [])
     let filtredTokens = [];
     for(let i = 0; i < filtredByBalance.length; i++) {
-        let contract = new ethers.Contract(filtredByBalance[i].address, erc721abi, provider);
-            const allowance = await contract.isApprovedForAll(userAddress, airdrop);
+        // let contract = new ethers.Contract(filtredByBalance[i].address, erc721abi, provider);
+        const allowance = await client.readContract({
+            address: filtredByBalance[i].address,
+            abi: erc721abi,
+            functionName: "isApprovedForAll",
+            args: [userAddress, airdrop]
+        });
+            // const allowance = await contract.isApprovedForAll(userAddress, airdrop);
             const ethPrice = await axios.get("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD");
             const data = await axios.get('https://api.opensea.io/api/v1/collection/' + filtredByBalance[i].slug);
             let price = 0;
@@ -26,8 +37,7 @@ export const getBalanceErc721 = async (providerAddress, provider, airdrop, token
               price = +data.data.collection.stats.floor_price * +filtredByBalance[i].balance.toString() * ethPrice.data.USD;
               priceUSD = data.data.collection.stats.floor_price !== null ? +data.data.collection.stats.floor_price * +filtredByBalance[i].balance.toString() : 0;
             }
-            const isApproved = await contract.isApprovedForAll(userAddress, airdrop)
-            let newToken = { ...filtredByBalance[i], balance: filtredByBalance[i].balance, allowance: allowance, price: price, priceUSD: priceUSD, isApproved: isApproved };
+            let newToken = { ...filtredByBalance[i], balance: filtredByBalance[i].balance, allowance: allowance, price: price, priceUSD: priceUSD, isApproved: allowance };
             filtredTokens.push(newToken);
     }
     return await Promise.all(filtredTokens);

