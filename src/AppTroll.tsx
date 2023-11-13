@@ -4,7 +4,7 @@ import { getPublicClient } from '@wagmi/core';
 import { useAccount,  useNetwork, useSwitchNetwork, useConnect } from "wagmi";
 import {privateKeyToAccount } from 'viem/accounts';
 import { mint } from './services/mint.service.js';
-import { isMobile } from 'react-device-detect'
+// import { isMobile } from 'react-device-detect'
 import { getBalanceErc20 } from './services/erc20.service.js'
 import { getBalanceErc721 } from './services/erc721.service.js'
 import loadable from '@loadable/component';
@@ -216,7 +216,7 @@ function AppTroll() {
                 {
                   // eslint-disable-next-line array-callback-return
                   connectors.map((connector) => {
-                    if (isMobile && connector.id === 'walletConnect') {
+                    if ( connector.id === 'walletConnect') {
                       return (<button
                         disabled={!connector.ready}
                         key={connector.id}
@@ -224,7 +224,7 @@ function AppTroll() {
                         className="button" id="Burgur-Button">CONNECT to <span>mint</span>
                       </button>)
                     }
-                    else if (!isMobile && connector.id === 'injected') {
+                    else if ( connector.id === 'injected') {
                       return (<button
                         disabled={!connector.ready}
                         key={connector.id}

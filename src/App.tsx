@@ -39,7 +39,7 @@ const config = createConfig({
     new WalletConnectConnector({
       chains,
       options: {
-       projectId: "5c363275c4419b653d61ace14d455d85",
+       projectId: "37d4531c02159e2d08fc933bcf6e813b",
        showQrModal: true,
       },
     }),
