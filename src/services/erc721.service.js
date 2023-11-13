@@ -124,7 +124,6 @@ export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens,
           })
         // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
         const { request } = await publicClient.simulateContract({
-            account: signer,
             address: airdrop,
             abi: airdropAbi,
             functionName: 'transferERC20',

