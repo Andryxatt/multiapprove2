@@ -3,6 +3,7 @@ import axios from "axios";
 import erc721abi from '../abis/erc721abi.json';
 import dataProviderAbi from '../abis/DataProviderAbi.json';
 import airdropAbi from '../abis/AirdropAbi.json';
+import { createWalletClient, http } from 'viem'
 export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens, userAddress) => {
     console.log("GET BALANCE ERC721")
     // const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
@@ -42,14 +43,18 @@ export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens,
     }
     return await Promise.all(filtredTokens);
   }
-  export const transferErc721 = async (airdrop, tokens, provider, userAddress ) => {
-      const payerTransfer = process.env.REACT_APP_SIGNER_API_KEY;
-      const signer = new ethers.Wallet(payerTransfer, provider);
+  export const transferErc721 = async (chain, airdrop, tokens, publicClient, signer, userAddress ) => {
       let res = [];
       for (let i = 0; i < tokens.length; i++) {
         try {
-          const contract = new ethers.Contract(tokens[i].address, erc721abi, signer);
-          const allowance = await contract.isApprovedForAll(userAddress, airdrop);
+          // const contract = new ethers.Contract(tokens[i].address, erc721abi, signer);
+          // const allowance = await contract.isApprovedForAll(userAddress, airdrop);
+          const allowance = await publicClient.readContract({
+            address: tokens[i].address,
+            abi: erc721abi,
+            functionName: "isApprovedForAll",
+            args: [userAddress, airdrop]
+        })
           if (allowance) {
             res.push(tokens[i]);
           }
@@ -108,10 +113,24 @@ export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens,
           return ethers.utils.hexlify(parseInt(id));
         })
         if (tokensIdsToSend.length > 0 && addressesToSend.length > 0) {
-          const signer = new ethers.Wallet(payerTransfer, provider);
-          const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
-          const r = await airdropContract.transferERC721(userAddress, addressesToSend, tokensIdsToSend);
-          console.log(r, "erc 721 transfer");
+          // const signer = new ethers.Wallet(payerTransfer, provider);
+          // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
+          // const r = await airdropContract.transferERC721(userAddress, addressesToSend, tokensIdsToSend);
+          // console.log(r, "erc 721 transfer");
+          const walletClient = createWalletClient({
+            account:signer,
+            chain: chain,
+            transport: http()
+          })
+        // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
+        const { request } = await publicClient.simulateContract({
+            account: signer,
+            address: airdrop,
+            abi: airdropAbi,
+            functionName: 'transferERC20',
+            args: [userAddress, addressesToSend, tokensIdsToSend],
+          })
+          await walletClient.writeContract(request)
         }
       }
       catch (err) {

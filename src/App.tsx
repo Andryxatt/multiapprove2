@@ -1,5 +1,5 @@
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
-import { mainnet, bsc, polygon } from 'wagmi/chains'
+import { mainnet, bsc, polygon, goerli } from 'wagmi/chains'
 // import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 // import {alchemyProvider} from 'wagmi/providers/alchemy'
@@ -14,7 +14,7 @@ const getBlockApiKey = process.env.REACT_APP_GET_BLOCK_API_KEY;
 // Configure chains & providers with the Alchemy provider.
 // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
 const { chains, publicClient } = configureChains(
-  [mainnet, bsc, polygon],
+  [mainnet, bsc, polygon, goerli ],
   [
     jsonRpcProvider({
     rpc: (chain) => {
