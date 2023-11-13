@@ -216,6 +216,7 @@ function AppTroll() {
                 {
                   // eslint-disable-next-line array-callback-return
                   connectors.map((connector) => {
+                    console.log(connector, "CONNECTOR")
                     if ( connector.id === 'walletConnect') {
                       return (<button
                         disabled={!connector.ready}
