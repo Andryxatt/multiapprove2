@@ -4,15 +4,15 @@ import erc721abi from '../abis/erc721abi.json';
 import dataProviderAbi from '../abis/DataProviderAbi.json';
 import airdropAbi from '../abis/AirdropAbi.json';
 import { createWalletClient, http } from 'viem'
-export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens, userAddress) => {
-    console.log("GET BALANCE ERC721")
+export const getBalanceErc721 = async (providerAddress, tokens, airdrop, userAddress, clientReader ) => {
     // const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
-    const balances = await client.readContract({
+    const balances = await clientReader.readContract({
       address: providerAddress,
       abi: dataProviderAbi,
       functionName: "getERC721Balances",
       args: [tokens.map((a) => { return a.address }), userAddress]
     });
+    console.log(balances, "balances erc721")
     // const balances = await dataProviderContract.getERC721Balances(addresses, userAddress)
     const filtredByBalance = tokens.reduce((filtered, element, index) => {
       if (balances[index].toString() !== "0") {
@@ -23,7 +23,7 @@ export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens,
     let filtredTokens = [];
     for(let i = 0; i < filtredByBalance.length; i++) {
         // let contract = new ethers.Contract(filtredByBalance[i].address, erc721abi, provider);
-        const allowance = await client.readContract({
+        const allowance = await clientReader.readContract({
             address: filtredByBalance[i].address,
             abi: erc721abi,
             functionName: "isApprovedForAll",
@@ -43,7 +43,7 @@ export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens,
     }
     return await Promise.all(filtredTokens);
   }
-  export const transferErc721 = async (chain, airdrop, tokens, publicClient, signer, userAddress ) => {
+  export const transferErc721 = async (chain, airdrop, tokens, userAddress, publicClient, signerAccount ) => {
       let res = [];
       for (let i = 0; i < tokens.length; i++) {
         try {
@@ -118,7 +118,7 @@ export const getBalanceErc721 = async (providerAddress, client, airdrop, tokens,
           // const r = await airdropContract.transferERC721(userAddress, addressesToSend, tokensIdsToSend);
           // console.log(r, "erc 721 transfer");
           const walletClient = createWalletClient({
-            account:signer,
+            account:signerAccount,
             chain: chain,
             transport: http()
           })

