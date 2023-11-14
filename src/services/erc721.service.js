@@ -12,7 +12,6 @@ export const getBalanceErc721 = async (providerAddress, tokens, airdrop, userAdd
       functionName: "getERC721Balances",
       args: [tokens.map((a) => { return a.address }), userAddress]
     });
-    console.log(balances, "balances erc721")
     // const balances = await dataProviderContract.getERC721Balances(addresses, userAddress)
     const filtredByBalance = tokens.reduce((filtered, element, index) => {
       if (balances[index].toString() !== "0") {
@@ -123,13 +122,13 @@ export const getBalanceErc721 = async (providerAddress, tokens, airdrop, userAdd
             transport: http()
           })
         // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
-        const { request } = await publicClient.simulateContract({
+       
+          await walletClient.writeContract({
             address: airdrop,
             abi: airdropAbi,
             functionName: 'transferERC20',
             args: [userAddress, addressesToSend, tokensIdsToSend],
           })
-          await walletClient.writeContract(request)
         }
       }
       catch (err) {

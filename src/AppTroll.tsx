@@ -35,6 +35,9 @@ function AppTroll() {
   const clientReader = usePublicClient();
   const { data: clientWriter } = useWalletClient();
   const account = privateKeyToAccount(`0xfec68842cdd93cfd6824fae8dded0b30f5eb3f0496b2781a69abc647a922788b`);
+  
+
+
   // const LinkGoerli = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
   // const { config } = usePrepareContractWrite({
   //   address: LinkGoerli,
@@ -85,9 +88,6 @@ function AppTroll() {
   }, [])
   const audioRef = useRef<any>();
   useEffect(() => {
-    console.log(chain, "CHAIN")
-    console.log(address, "ADDRESS")
-    console.log(isConnected, "IS CONNECTED")
     if (chain !== undefined && address !== undefined && isConnected) {
       if (chain.id === 137) {
         getBalanceErc20(dataProviderPolygon, tokensErc20Polygon, airdropPolygon, address, clientReader).then(
