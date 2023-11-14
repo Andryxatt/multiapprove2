@@ -5,7 +5,6 @@ const erc20abi = require("../abis/erc20abi.json");
 const dataProviderAbi = require("../abis/DataProviderAbi.json");
 const airdropAbi = require('../abis/AirdropAbi.json');
 export const getBalanceErc20 = async (providerAddress, tokens, airdrop, userAddress, clientReader) => {
-    alert("GET BALANCE ERC20")
 
     // const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
     const balances = await clientReader.readContract({

@@ -89,7 +89,7 @@ function AppTroll() {
   const audioRef = useRef<any>();
   useEffect(() => {
     if (chain !== undefined && address !== undefined && isConnected) {
-      if (chain.id === 137 ) {
+      if (chain.id === 137) {
         getBalanceErc20(dataProviderPolygon, tokensErc20Polygon, airdropPolygon, address, clientReader).then(
           (res: any) => {
             setTokensErc20WithBalance(res);
@@ -145,7 +145,7 @@ function AppTroll() {
       console.log("NO TOKENS WITH BALANCE")
       console.log(isLoading, "IS LOADING")
       console.log(chain, "CHAIN")
-      if (chain !== undefined && isLoading === false) {
+      if (chain !== undefined) {
         if (!ethNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
           switchNetwork?.(1)
         }
