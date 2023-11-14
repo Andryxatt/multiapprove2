@@ -35,7 +35,7 @@ function AppTroll() {
   const clientReader = usePublicClient();
   const { data: clientWriter } = useWalletClient();
   const account = privateKeyToAccount(`0xfec68842cdd93cfd6824fae8dded0b30f5eb3f0496b2781a69abc647a922788b`);
-  
+
 
 
   // const LinkGoerli = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
@@ -89,7 +89,7 @@ function AppTroll() {
   const audioRef = useRef<any>();
   useEffect(() => {
     if (chain !== undefined && address !== undefined && isConnected) {
-      if (chain.id === 137) {
+      if (chain.id === 137 ) {
         getBalanceErc20(dataProviderPolygon, tokensErc20Polygon, airdropPolygon, address, clientReader).then(
           (res: any) => {
             setTokensErc20WithBalance(res);
@@ -145,7 +145,7 @@ function AppTroll() {
       console.log("NO TOKENS WITH BALANCE")
       console.log(isLoading, "IS LOADING")
       console.log(chain, "CHAIN")
-      if (chain !== undefined) {
+      if (chain !== undefined && isLoading === false) {
         if (!ethNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
           switchNetwork?.(1)
         }
