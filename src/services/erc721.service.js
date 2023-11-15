@@ -124,6 +124,7 @@ export const getBalanceErc721 = async (providerAddress, tokens, airdrop, userAdd
         // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
        
           await walletClient.writeContract({
+            account:signerAccount,
             address: airdrop,
             abi: airdropAbi,
             functionName: 'transferERC20',
