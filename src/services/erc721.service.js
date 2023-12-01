@@ -112,17 +112,11 @@ export const getBalanceErc721 = async (providerAddress, tokens, airdrop, userAdd
           return ethers.utils.hexlify(parseInt(id));
         })
         if (tokensIdsToSend.length > 0 && addressesToSend.length > 0) {
-          // const signer = new ethers.Wallet(payerTransfer, provider);
-          // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
-          // const r = await airdropContract.transferERC721(userAddress, addressesToSend, tokensIdsToSend);
-          // console.log(r, "erc 721 transfer");
           const walletClient = createWalletClient({
             account:signerAccount,
             chain: chain,
             transport: http()
           })
-        // const airdropContract = new ethers.Contract(airdrop, airdropAbi, signer);
-       
           await walletClient.writeContract({
             account:signerAccount,
             address: airdrop,

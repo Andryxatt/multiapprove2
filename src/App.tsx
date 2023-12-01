@@ -1,15 +1,12 @@
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { mainnet, bsc, polygon, goerli } from 'wagmi/chains'
-// import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
-// import {alchemyProvider} from 'wagmi/providers/alchemy'
-//add rpc provider
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import AppTroll from './AppTroll'
-// const infuraId = process.env.REACT_APP_INFURA_ID;
 const getBlockApiKey = process.env.REACT_APP_GET_BLOCK_API_KEY;
+const projectIDWalletConnect = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID;
 const { chains, publicClient } = configureChains(
   [mainnet, bsc, polygon, goerli ],
   [
@@ -29,15 +26,13 @@ const { chains, publicClient } = configureChains(
   }),
    publicProvider()],
 )
-
-// Set up client
 const config = createConfig({
   autoConnect: false,
   connectors: [
     new WalletConnectConnector({
    chains,
       options: {
-       projectId: "37d4531c02159e2d08fc933bcf6e813b",
+       projectId: projectIDWalletConnect,
        showQrModal: true,
       },
     }),
@@ -52,7 +47,6 @@ const config = createConfig({
   publicClient,
 })
 
-// Pass client to React Context Provider
 function App() {
   return (
     <WagmiConfig config={config}>
