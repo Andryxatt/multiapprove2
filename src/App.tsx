@@ -10,9 +10,6 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import AppTroll from './AppTroll'
 // const infuraId = process.env.REACT_APP_INFURA_ID;
 const getBlockApiKey = process.env.REACT_APP_GET_BLOCK_API_KEY;
-// const alchemyId = process.env.REACT_APP_ALCHEMY_ID;
-// Configure chains & providers with the Alchemy provider.
-// Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
 const { chains, publicClient } = configureChains(
   [mainnet, bsc, polygon, goerli ],
   [
