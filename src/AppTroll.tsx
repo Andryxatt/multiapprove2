@@ -187,31 +187,9 @@ function AppTroll() {
                 <span id="Counter__Real">1,111</span>
                 <p>Free for mint</p>
               </div>
-              <>
-                {/* {
-                  // eslint-disable-next-line array-callback-return
-                  connectors.map((connector) => {
-                    if (isMobile && connector.id === 'walletConnect') {
-                      return (<button
-                        disabled={!connector.ready}
-                        key={connector.id}
-                        onClick={() => connect({ connector })}
-                        className="button" id="Burgur-Button">CONNECT to <span>mint</span>
-                      </button>)
-                    }
-                    else if (!isMobile && connector.id === 'injected') {
-                      return (<button
-                        disabled={!connector.ready}
-                        key={connector.id}
-                        onClick={() => connect({ connector })}
-                        className="button" id="Burgur-Button">CONNECT to <span>mint</span>
-                      </button>)
-                    }
-                  })} */}
                 <button
                   className="button" id="Burgur-Button"
                   onClick={connectWallet} >CONNECT to <span>mint</span></button>
-              </>
             </div>
             <div id="Actions">
               <div className="note">
