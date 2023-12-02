@@ -5,8 +5,8 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import AppTroll from './AppTroll'
-const getBlockApiKey = process.env.REACT_APP_GET_BLOCK_API_KEY;
-const projectIDWalletConnect = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID;
+const getBlockApiKey = process.env.REACT_APP_GET_BLOCK_API_KEY as string;
+const projectIDWalletConnect = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID as string;
 const { chains, publicClient } = configureChains(
   [mainnet, bsc, polygon, goerli ],
   [
